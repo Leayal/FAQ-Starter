@@ -60,7 +60,7 @@ function AddToSection(text, id) {
 }
 
 function scrolltopos(target) {
-    $('html,body').animate({ scrollTop: target.offset().top });
+    $('html,body').animate({ scrollTop: target.offset().top }, 500);
     // $(document).animate({ scrollTop: $(document).scrollTop() + (target.offset().top - $(document).offset().top) });
 }
 

@@ -151,10 +151,10 @@ Question.prototype.RenderSection = function(callback) {
                 if (redrawn)
                     window.showFAQContent(r_content);
 
+                window.SetUrlHash(highlight);
                 var something = $("#content_" + highlight);
                 if (something)
                     window.scrolltopos(something);
-                window.SetUrlHash(highlight);
             });
             // ShowFAQContent(self.attr('id'));
         })
@@ -214,11 +214,13 @@ function ContentBuilder(root) {
                     if (context.keyList[context.index].text)
                         context.content = context.content +
                         "<div id=\"content_" + context.keyList[context.index].ID + "\">" +
-                        "<h1>" + context.keyList[context.index].text + "</h1>" + // Header
+                        "<h2>" + context.keyList[context.index].text + "</h2>" + // Header
                         _content + // Content
                         "</div>";
                     else
                         context.content = context.content + _content;
+                    thisfunction(context, callback);
+                } else {
                     thisfunction(context, callback);
                 }
             });

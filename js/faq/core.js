@@ -1,17 +1,29 @@
 var elementLastAdded;
-var markdownEngine = new showdown.Converter({ extensions: ['youtube'] });
+// Extension
+showdown.extension("NewWindowLink", function() {
+    return [{
+        type: "lang",
+        regex: /\[((?:\[[^\]]*]|[^\[\]])*)]\([ \t]*<?(.*?(?:\(.*?\).*?)?)>?[ \t]*((['"])(.*?)\4[ \t]*)?\)\{\:target=(["'])([^"]*)\6}/g,
+        replace: function(wholematch, linkText, url, a, b, title, c, target) {
 
-function readurlparam(name) {
-    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
-};
+            var result = "<a href=\"" + url + "\"";
 
-function GetUrlParam(name, defaultvalue) {
-    var re = readurlparam(name);
-    if (re)
-        return re;
-    else
-        return defaultvalue;
-};
+            if (typeof title != "undefined" && title !== "" && title !== null) {
+                title = title.replace(/"/g, "&quot;");
+                title = showdown.helper.escapeCharacters(title, "*_", false);
+                result += " title=\"" + title + "\"";
+            }
+
+            if (typeof target != "undefined" && target !== "" && target !== null) {
+                result += " target=\"" + target + "\"";
+            }
+
+            result += ">" + linkText + "</a>";
+            return result;
+        }
+    }];
+});
+var markdownEngine = new showdown.Converter({ extensions: ["youtube", "NewWindowLink"] });
 
 function GetUrlHash() {
     if (window.location.hash.charAt(0) == '#')
@@ -64,7 +76,10 @@ function AddToSection(text, id) {
 }
 
 function scrolltopos(target) {
-    $('html,body').animate({ scrollTop: target.offset().top }, 500);
+    if (!target) return;
+    var offset = target.offset();
+    if (!offset) return;
+    $('html,body').animate({ scrollTop: offset.top }, 500);
     // $(document).animate({ scrollTop: $(document).scrollTop() + (target.offset().top - $(document).offset().top) });
 }
 
@@ -80,7 +95,17 @@ function showFAQContent(htmlcontent) {
         window.SetUrlHash(null);
     } else {
         // Fetch the FAQ content
-        targetDOM.append($("<div>").addClass("animated fadeInLeft").html(htmlcontent));
+        var jqueryContent = $(htmlcontent);
+        // console.log(htmlcontent);
+        jqueryContent.on("click", "a[href]", function(e) {
+            e.preventDefault();
+            var id = $(this).attr("href");
+            if (id && id.charAt(0) === "#") {
+                id = id.substr(1);
+                $("#" + id).click();
+            }
+        });
+        targetDOM.append($("<div>").addClass("animated fadeInLeft").append(jqueryContent));
         /*window.Controller.GetFAQInfo(id, function(content) {
             targetDOM.append($("<div>").addClass("animated fadeInRight").html('<h1>' + info.text + '</h1>' + info.content));
         });*/
@@ -173,6 +198,8 @@ var Controller = new function() {
 }
 
 $(function() {
+    var selectedq = GetUrlHash();
+
     $("a#linkToHome").click(function(e) {
         e.preventDefault();
         var self = $(this);
@@ -187,8 +214,6 @@ $(function() {
     homelink.click();
     $("#wrapper").addClass("toggled");
 
-    var selectedq = GetUrlHash();
-
     window.Controller.RequestFAQContent(function(content) {
         if (content && content.faqs) {
             for (var faqID in content.faqs)
@@ -198,7 +223,7 @@ $(function() {
                     });
 
             if (selectedq) {
-                $("#" + selectedq).click();
+                $("a#" + selectedq).click();
             }
         }
     });

@@ -42,11 +42,10 @@ function AddToSection(text, id) {
                 window.Controller.GetContentRender(self.attr("id"), function(r_content, redrawn, highlight) {
                     if (redrawn)
                         window.showFAQContent(r_content);
-                    else {
-                        var something = $("#" + highlight);
-                        if (something)
-                            window.scrolltopos(something);
-                    }
+
+                    var something = $("#content_" + highlight);
+                    if (something)
+                        window.scrolltopos(something);
                     window.SetUrlHash(highlight);
                 });
                 // ShowFAQContent(self.attr('id'));
@@ -61,7 +60,7 @@ function AddToSection(text, id) {
 }
 
 function scrolltopos(target) {
-    $('html,body').animate({ scrollTop: target.offset().top }, 500);
+    $('html,body').animate({ scrollTop: target.offset().top });
     // $(document).animate({ scrollTop: $(document).scrollTop() + (target.offset().top - $(document).offset().top) });
 }
 

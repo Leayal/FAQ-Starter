@@ -42,6 +42,12 @@
                             "link": "faqs/Section2.txt"
                         }
                     }
+                },
+                "q2_2": {
+                    "text": "Subcategory2 of Section2",
+                    "content": {
+                        "markdown": "nothing"
+                    }
                 }
             }
         }

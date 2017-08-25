@@ -112,11 +112,10 @@ var nestedSectionCreate = function thisfunction(currentLi, currentItem) {
                 window.Controller.GetContentRender(self.attr("id"), function(r_content, redrawn, highlight) {
                     if (redrawn)
                         window.showFAQContent(r_content);
-                    else {
-                        var something = $("#" + highlight);
-                        if (something)
-                            window.scrolltopos(something);
-                    }
+
+                    var something = $("#content_" + highlight);
+                    if (something)
+                        window.scrolltopos(something);
                     window.SetUrlHash(highlight);
                 });
                 // ShowFAQContent(self.attr('id'));
@@ -151,11 +150,10 @@ Question.prototype.RenderSection = function(callback) {
             window.Controller.GetContentRender(self.attr("id"), function(r_content, redrawn, highlight) {
                 if (redrawn)
                     window.showFAQContent(r_content);
-                else {
-                    var something = $("#" + highlight);
-                    if (something)
-                        window.scrolltopos(something);
-                }
+
+                var something = $("#content_" + highlight);
+                if (something)
+                    window.scrolltopos(something);
                 window.SetUrlHash(highlight);
             });
             // ShowFAQContent(self.attr('id'));
@@ -215,7 +213,7 @@ function ContentBuilder(root) {
                 if (_content) {
                     if (context.keyList[context.index].text)
                         context.content = context.content +
-                        "<div id=\"" + context.keyList[context.index].ID + "\">" +
+                        "<div id=\"content_" + context.keyList[context.index].ID + "\">" +
                         "<h1>" + context.keyList[context.index].text + "</h1>" + // Header
                         _content + // Content
                         "</div>";

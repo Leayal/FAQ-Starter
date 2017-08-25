@@ -1,6 +1,32 @@
 var elementLastAdded;
 var markdownEngine = new showdown.Converter({ extensions: ['youtube'] });
 
+function readurlparam(name) {
+    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
+};
+
+function GetUrlParam(name, defaultvalue) {
+    var re = readurlparam(name);
+    if (re)
+        return re;
+    else
+        return defaultvalue;
+};
+
+function GetUrlHash() {
+    if (window.location.hash.charAt(0) == '#')
+        return window.location.hash.substr(1);
+    else
+        return window.location.hash;
+}
+
+function SetUrlHash(str) {
+    if (str.charAt(0) == '#')
+        window.location.hash = str;
+    else
+        window.location.hash = "#" + str;
+}
+
 function AddToSection(text, id) {
     if (window.elementLastAdded === undefined)
         window.elementLastAdded = $("#insertAfterStart");
@@ -21,6 +47,7 @@ function AddToSection(text, id) {
                         if (something)
                             window.scrolltopos(something);
                     }
+                    window.SetUrlHash(highlight);
                 });
                 // ShowFAQContent(self.attr('id'));
             })
@@ -34,7 +61,8 @@ function AddToSection(text, id) {
 }
 
 function scrolltopos(target) {
-    $(window).animate({ scrollTop: $(window).scrollTop() + (target.offset().top - $(window).offset().top) });
+    $('html,body').animate({ scrollTop: target.offset().top }, 500);
+    // $(document).animate({ scrollTop: $(document).scrollTop() + (target.offset().top - $(document).offset().top) });
 }
 
 function showFAQContent(htmlcontent) {
@@ -81,12 +109,12 @@ var Controller = new function() {
     this.GetContentRender = function(id, callback) {
         if (typeof callback !== "function") return;
         var targetRoot = this.GetRootFromCache(id);
-
-        if (this.currentviewing === targetRoot) {
+        var viewing = targetRoot.GetRoot();
+        if (this.currentviewing === viewing) {
             callback("", false, id);
         } else {
-            this.currentviewing = targetRoot;
-            targetRoot.RenderContent(function(content) {
+            this.currentviewing = viewing;
+            viewing.RenderContent(function(content) {
                 if (typeof content === "string") {
                     if (!content)
                         callback(markdownEngine.makeHtml("# In building"), true, id);
@@ -130,8 +158,6 @@ var Controller = new function() {
                         if (data.faqs.hasOwnProperty(faqID))
                             self.loadedfaqs[faqID] = ParseQuestion(faqID, data.faqs[faqID], function nestedReading(currentQ, rootQ) {
                                 self.faqlocationcache[currentQ.ID] = rootQ;
-                                console.log(currentQ);
-                                console.log(rootQ);
                             });
                 }
                 callback(data);
@@ -157,12 +183,19 @@ $(function() {
     homelink.click();
     $("#wrapper").addClass("toggled");
 
+    var selectedq = GetUrlHash();
+
     window.Controller.RequestFAQContent(function(content) {
-        if (content && content.faqs)
+        if (content && content.faqs) {
             for (var faqID in content.faqs)
                 if (content.faqs.hasOwnProperty(faqID))
                     window.Controller.GetSectionRender(faqID, function(r_section) {
                         window.AddToSection(r_section, faqID);
                     });
+
+            if (selectedq) {
+                $("#" + selectedq).click();
+            }
+        }
     });
 });

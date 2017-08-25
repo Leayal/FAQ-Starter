@@ -117,6 +117,7 @@ var nestedSectionCreate = function thisfunction(currentLi, currentItem) {
                         if (something)
                             window.scrolltopos(something);
                     }
+                    window.SetUrlHash(highlight);
                 });
                 // ShowFAQContent(self.attr('id'));
             })
@@ -155,6 +156,7 @@ Question.prototype.RenderSection = function(callback) {
                     if (something)
                         window.scrolltopos(something);
                 }
+                window.SetUrlHash(highlight);
             });
             // ShowFAQContent(self.attr('id'));
         })
@@ -213,8 +215,10 @@ function ContentBuilder(root) {
                 if (_content) {
                     if (context.keyList[context.index].text)
                         context.content = context.content +
+                        "<div id=\"" + context.keyList[context.index].ID + "\">" +
                         "<h1>" + context.keyList[context.index].text + "</h1>" + // Header
-                        _content; // Content
+                        _content + // Content
+                        "</div>";
                     else
                         context.content = context.content + _content;
                     thisfunction(context, callback);

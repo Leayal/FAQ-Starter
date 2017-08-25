@@ -103,7 +103,7 @@ Question.prototype.GetContent = function(callback) {
 var nestedSectionCreate = function thisfunction(currentLi, currentItem) {
 
     var createdLi = $("<li>").addClass("no-bulleting").append(
-            $("<a>").attr("id", currentItem.ID).attr("href", "#").addClass("section-font").append($("<p>").addClass("section-child-text").text(currentItem.text)).click(function(e) {
+            $("<a>").attr("id", currentItem.ID).attr("href", "#" + currentItem.ID).addClass("section-font").append($("<p>").addClass("section-child-text").text(currentItem.text)).click(function(e) {
                 e.preventDefault();
                 var self = $(this);
                 if (self.hasClass("activated")) return;
@@ -141,7 +141,7 @@ Question.prototype.RenderSection = function(callback) {
     </li>*/
 
     var mainLi = $("<li>").append(
-        $("<a>").attr("id", this.ID).attr("href", "#").addClass("section-main-font").append($("<p>").addClass("section-main-text").text(this.text)).click(function(e) {
+        $("<a>").attr("id", this.ID).attr("href", "#" + this.ID).addClass("section-main-font").append($("<p>").addClass("section-main-text").text(this.text)).click(function(e) {
             e.preventDefault();
             var self = $(this);
             if (self.hasClass("activated")) return;

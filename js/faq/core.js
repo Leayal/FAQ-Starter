@@ -21,6 +21,10 @@ function GetUrlHash() {
 }
 
 function SetUrlHash(str) {
+    if (!str) {
+        window.location.hash = "";
+        return;
+    }
     if (str.charAt(0) == '#')
         window.location.hash = str;
     else
@@ -73,6 +77,7 @@ function showFAQContent(htmlcontent) {
         //everything-center
         targetDOM.append($("<div>").addClass("everything-center animated fadeInDown").html(CONFIG.HOMEPAGE_HTML));
         window.Controller.currentviewing = null;
+        window.SetUrlHash(null);
     } else {
         // Fetch the FAQ content
         targetDOM.append($("<div>").addClass("animated fadeInLeft").html(htmlcontent));
